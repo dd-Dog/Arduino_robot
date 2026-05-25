@@ -1,0 +1,10 @@
+# Arduino IDE
+*.hex
+*.elf
+*.eep
+build/
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
