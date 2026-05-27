@@ -33,7 +33,12 @@
  *   短刹：IN1=HIGH, IN2=HIGH（本程序未用）
  *
  * 调试：车轮架空；某侧反了改 MOTOR_LEFT/RIGHT_DIR_REVERSE
+ *
+ * 重要：请用 Arduino IDE 打开文件夹 car_tb6612（不要打开 sketch_may21a）
+ * IDE 须显示：car_tb6612 | Arduino Uno，上传成功后再测引脚。
  */
+
+#define DEBUG_HOLD_FORWARD 0  // 1=一直前进便于万用表测 D3/D4/D5（测完改回 0）
 
 // ---------- 逻辑控制脚 → Arduino ----------
 const int PIN_PWMA = 5;    // A 路 PWM → 左侧两电机
@@ -74,6 +79,12 @@ void setup() {
 }
 
 void loop() {
+#if DEBUG_HOLD_FORWARD
+  // 测引脚：前进时常应为 D4≈5V, D3≈0V, D5有PWM, D10≈5V, D6~D8同理
+  driveForward(255);
+  return;
+#endif
+
   driveForward(SPEED_HIGH);
   delay(MS_FORWARD);
   stopAll();
