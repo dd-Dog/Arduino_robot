@@ -254,6 +254,19 @@ cm = 38（≈dSafe）→ 减速 SPEED_LOW
 
 **升档难、降档易** → 中间 10cm 谁也不动，车跑得稳。工业控制里水位、温控常用同一思路。
 
+#### FORWARD ↔ BACKUP 在同一位置来回抖
+
+典型链路：`FORWARD` 见 `cm<dStop` → `BACKUP` 约 350ms → `DECIDE` 单次测到 `cm≥dProbeOk` → 又 `FORWARD` 顶墙 → 再 `BACKUP`。
+
+对策（v2 已实现）：
+
+| 机制 | 作用 |
+|------|------|
+| `NEAR_CONFIRM` | 极近须连续 N 次才 BACKUP，滤单次误读 |
+| `BACKUP_COOLDOWN_MS` | 刚退完不再立刻 BACKUP，改 `DECIDE` 转向 |
+| `CLEAR_CONFIRM` | 回 FORWARD 须连续 N 次 `cm≥dProbeOk` |
+| 冷却内禁止 DECIDE 阶段 0「未转就直行」 | 后退后必须先右/左探，不能测一次就 FORWARD |
+
 | 想调 | 改哪 |
 |------|------|
 | 切档太跳、一顿一顿 | **加大** `dClear - dSafe`（公式里的 `+10`） |
@@ -334,7 +347,7 @@ sensorBackMargin = max(0, -SENSOR_OFFSET_CM)
 
 | 区间 | 条件 | 动作 |
 |------|------|------|
-| 极近 | `cm < dStop` | `BACKUP` 后退一段，再 DECIDE |
+| 极近 | `cm < dStop` 连续 `NEAR_CONFIRM` 次 | `BACKUP` 后退，再 `DECIDE`（冷却内不再立刻 BACKUP） |
 | 近 | `dStop ≤ cm < dBrake` | 进入 `DECIDE` 探测左/右/前 |
 | 中 | `dBrake ≤ cm < dSafe` | `SPEED_LOW` 慢行 |
 | 较通 | `dSafe ≤ cm < dClear` | `SPEED_MID` 中速 |
@@ -345,6 +358,7 @@ sensorBackMargin = max(0, -SENSOR_OFFSET_CM)
 | 现象 | 改哪 |
 |------|------|
 | 撞墙太晚才刹 | 加大 `BRAKE_PAD_CM` 或 `STOP_PAD_CM` |
+| 同一位置反复前进后退（FORWARD↔BACKUP） | 加大 `BACKUP_COOLDOWN_MS`；或加大 `CLEAR_CONFIRM` / `NEAR_CONFIRM` |
 | 一直在墙边走停走停、加减速抖 | 加大 `dClear - dSafe`（公式里 `+10`，见上文滞回说明） |
 | 转过去又马上想再转 | 加大 `dProbeOk - dSafe`（公式里 `+5`） |
 | 已经很近才后退 | 加大 `BACKUP_PAD_CM` |
@@ -364,7 +378,9 @@ sensorBackMargin = max(0, -SENSOR_OFFSET_CM)
 | `lastEscapeMs` | `unsigned long` | 0 | 上一次进入 **ESCAPE** 的时刻（`millis()`） |
 | `pathClearSinceMs` | `unsigned long` | 0 | 前方首次判定「通畅」的时刻；用于复位 `stuckLevel` |
 | `blockedStreak` | `byte` | 0 | **连续近障**计数；够 `BLOCK_CONFIRM` 次才进 DECIDE |
-| `clearStreak` | `byte` | 0 | 预留（当前未用）；复位 `stuckLevel` 靠 `pathClearSinceMs` 计时 |
+| `clearStreak` | `byte` | 0 | **连续畅通**计数；`DECIDE` 里够 `CLEAR_CONFIRM` 次且 `cm≥dProbeOk` 才回 FORWARD |
+| `nearStreak` | `byte` | 0 | **连续极近**计数；够 `NEAR_CONFIRM` 次才进 BACKUP |
+| `lastBackupEndMs` | `unsigned long` | 0 | 上次 BACKUP/ESCAPE 结束时刻；冷却内 FORWARD 不再立刻 BACKUP |
 | `lastValidCm` | `long` | 100 | 最近一次**有效**测距；`cm=-1` 时暂用此值决策 |
 
 ### `stuckLevel` — 脱困档位
