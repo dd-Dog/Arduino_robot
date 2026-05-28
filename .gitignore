@@ -3,7 +3,6 @@
 *.elf
 *.eep
 build/
-*.bak
 
 # OS
 .DS_Store

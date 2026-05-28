@@ -1,24 +1,18 @@
 /*
- * 四驱小车 — 避障版（HC-SR04 Trig/Echo）
+ * 四驱小车 — 避障版 v1（固定朝前 HC-SR04）
  *
- * 在演示版基础上增加超声波；电机/TB6612 接线与 car_tb6612 相同。
+ * 版本：FIRMWARE_VERSION = "v1"
+ * 策略说明：本目录 VERSION.md
+ * 后续 v2 规划：docs/DEVELOPMENT.md
  *
  * Arduino IDE：打开文件夹 car_tb6612_avoid 上传本文件。
- * 排查旧行为：打开 car_tb6612 上传演示版，无需 git 回退。
+ * 刷演示版：打开 car_tb6612，无需 git 回退。
  *
- * HC-SR04（经典 Trig/Echo，不接 I2C/UART）：
- *   Vcc → 5V    Gnd → GND（与 TB6612、Uno 共地）
- *   Trig → D9   Echo → D12
- *
- * 调试：
- *   SERIAL_DEBUG 1 → 串口 9600 打印距离
- *   DEBUG_HOLD_FORWARD / DEBUG_SENSOR_ONLY 见下方宏
- *
- * 脱困策略（狭窄通道）：
- *   连续很快再次遇障 → stuckLevel+1，后退/转向时间按档位加大
- *   每次转向方向与上次相反，且转角更大（不会同角左一下右一下回原位）
- *   前方畅通超过 STUCK_RESET_MS → stuckLevel 归零
+ * HC-SR04：Vcc 5V  Gnd 共地  Trig D9  Echo D12
+ * 调试：DEBUG_HOLD_FORWARD / DEBUG_SENSOR_ONLY / SERIAL_DEBUG
  */
+
+#define FIRMWARE_VERSION "v1"
 
 #define DEBUG_HOLD_FORWARD 0
 #define DEBUG_SENSOR_ONLY  0   // 1=只串口输出距离，电机不动
@@ -95,7 +89,9 @@ void setup() {
 #if SERIAL_DEBUG || DEBUG_SENSOR_ONLY
   Serial.begin(9600);
   delay(200);
-  Serial.println(F("=== HC-SR04 debug, 9600 ==="));
+  Serial.print(F("car_tb6612_avoid "));
+  Serial.println(FIRMWARE_VERSION);
+  Serial.println(F("=== HC-SR04 9600 ==="));
   Serial.print(F("Echo idle (应多为0): "));
   Serial.println(digitalRead(PIN_ECHO));
   Serial.println(F("Trig=D9 Echo=D12; 一直 us=0 查接线/Trig与Echo是否接反"));
