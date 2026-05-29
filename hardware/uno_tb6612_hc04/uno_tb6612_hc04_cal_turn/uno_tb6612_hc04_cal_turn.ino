@@ -1,46 +1,22 @@
 /*
  * 原地转向标定 — 测 SPEED_LOW 下「度 / 毫秒」
  *
- * 用途：校准 uno_tb6612_hc04_avoid_v2_fsm_alg_1_1 里的
- *       const float DEG_PER_MS_AT_SPEED_LOW = 0.30f;
+ * 公用参数：libraries/uno_tb6612_hc04/common_1_0/motion.h
+ * 标定结果写回 motion.h，各避障 sketch 自动同步。
  *
  * Arduino IDE：打开文件夹 uno_tb6612_hc04_cal_turn 上传。
- * 接线与 v2 相同（TB6612 D3~D8，STBY D10），无需 HC-SR04。
- *
- * 用法：
- *   1. 车轮架空，或地面贴一条胶带当 0° 参考线。
- *   2. 串口 9600，看提示；每次转 CAL_SPIN_MS 毫秒后停 5s 再转。
- *   3. 用 protractor / 手机量角 / 数整圈，记下实际转角 D（度）。
- *   4. DEG_PER_MS = D / CAL_SPIN_MS  → 写回 v2。
- *
- * 例：转 1200ms 实测刚好 360° → DEG_PER_MS = 360/1200 = 0.30
+ * 库路径：见 docs/CONFIG.md
  */
 
-// ---------- 与 v2 保持一致 ----------
-const int PIN_PWMA = 5;
-const int PIN_AIN1 = 4;
-const int PIN_AIN2 = 3;
-const int PIN_PWMB = 6;
-const int PIN_BIN1 = 7;
-const int PIN_BIN2 = 8;
-const int PIN_STBY = 10;
+#include <uno_tb6612_hc04.h>
 
-const bool MOTOR_LEFT_DIR_REVERSE  = false;
-const bool MOTOR_RIGHT_DIR_REVERSE = false;
-
-const int SPEED_LOW = 120;   // 与 v2 相同
-
-// 单次原地转多久（毫秒）；v2 标定约 0.10~0.11 °/ms → 1200ms 约 120°~135°
+// 单次原地转多久（毫秒）；1200ms @ 0.105 °/ms ≈ 126°
 const unsigned long CAL_SPIN_MS = 1200;
 
-// 1=右转（与 v2 turnRight 一致），-1=左转
-const int TURN_DIR = 1;
+const int TURN_DIR = 1;   // 1=右转，-1=左转
 
 const unsigned long PAUSE_BETWEEN_MS = 5000;
 const unsigned long COUNTDOWN_MS     = 2000;
-
-// 仅用于串口打印「按当前猜测值应转多少度」
-const float GUESS_DEG_PER_MS = 0.105f;
 
 void turnLeft(int speed);
 void turnRight(int speed);
@@ -67,14 +43,14 @@ void setup() {
   Serial.println(SPEED_LOW);
   Serial.print(F("CAL_SPIN_MS="));
   Serial.println(CAL_SPIN_MS);
-  Serial.print(F("guess DEG_PER_MS="));
-  Serial.println(GUESS_DEG_PER_MS, 4);
+  Serial.print(F("DEG_PER_MS (lib)="));
+  Serial.println(DEG_PER_MS_AT_SPEED_LOW, 4);
   Serial.print(F("guess spin deg="));
-  Serial.println(CAL_SPIN_MS * GUESS_DEG_PER_MS, 1);
+  Serial.println(CAL_SPIN_MS * DEG_PER_MS_AT_SPEED_LOW, 1);
   Serial.print(F("turn "));
   Serial.println(TURN_DIR > 0 ? F("RIGHT") : F("LEFT"));
   Serial.println(F("Mark 0 deg, then each spin measure actual D."));
-  Serial.println(F("DEG_PER_MS = D / CAL_SPIN_MS"));
+  Serial.println(F("DEG_PER_MS = D / CAL_SPIN_MS  ->  motion.h"));
   Serial.println();
 }
 

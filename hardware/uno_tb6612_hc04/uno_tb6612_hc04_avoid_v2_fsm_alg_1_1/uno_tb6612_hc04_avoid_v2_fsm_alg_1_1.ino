@@ -17,6 +17,10 @@
  *
  * 调试宏：
  *   DEBUG_HOLD_FORWARD / DEBUG_SENSOR_ONLY / SERIAL_DEBUG
+ *
+ * 参数：
+ *   平台公用 → libraries/uno_tb6612_hc04/common_1_0/（via <uno_tb6612_hc04.h>）
+ *   本算法   → .../params_alg_1_1_cfg_1_0.h
  */
 
 #define ALG_ID           "ALG-1.1"
@@ -28,107 +32,8 @@
 #define SERIAL_DEBUG       1   // 9600；须为 1 才有 ST/FWD/turn/ESC 等（SENSOR_ONLY 不再只打 cm）
 #define SERIAL_DEBUG_RAW   0
 
-// ==================== 引脚 ====================
-
-const int PIN_PWMA = 5;
-const int PIN_AIN1 = 4;
-const int PIN_AIN2 = 3;
-
-const int PIN_PWMB = 6;
-const int PIN_BIN1 = 7;
-const int PIN_BIN2 = 8;
-
-const int PIN_STBY = 10;
-
-const int PIN_TRIG = 9;
-const int PIN_ECHO = 12;
-
-// ==================== 小车机械参数 ====================
-// 调参时按实际底盘测一下；只是用于推导避障阈值/转向时间，写错不会损坏硬件
-
-const int CAR_LENGTH_CM = 26;   // 车头到车尾
-const int CAR_WIDTH_CM  = 16;   // 车体宽
-const int CAR_HEIGHT_CM = 12;    // 车体高+雷达等配件高度（仅供记录）
-
-const int SENSOR_OFFSET_CM = -1; // 探头相对车头的位置（正=突出于车头，负=退后到车体里）
-// 防撞按「车上最靠前的部位」为准：
-//   offset > 0（探头突出）：探头先撞 → 关心探头距 = 测距，阈值不补偿
-//   offset < 0（探头退后）：车头先撞 → 车头距 = 测距 + offset = 测距 - |offset|
-//                            阈值要补 |offset| 才能让车头留出同样余量
-//   offset = 0：探头与车头齐平，按测距直接判断
-// 统一为：阈值补偿量 = max(0, -SENSOR_OFFSET_CM)
-// HC-SR04 检测锥角约 ±15°，物理探测下限 2cm
-
-// ---- 转向标定（SPEED_LOW 原地转，uno_tb6612_hc04_cal_turn 1200ms）----
-// 实测（落地）：木地板 ≈135° → 0.1125 °/ms；瓷砖 ≈120° → 0.10 °/ms
-// 折中 0.105；若主要在瓷砖跑可改为 0.10（转角略大一点）
-const int   SPEED_LOW    = 120;
-const int   SPEED_MID    = 160;
-const int   SPEED_HIGH   = 200;
-const float DEG_PER_MS_AT_SPEED_LOW = 0.105f;
-
-// 由 DEG_PER_MS 推导
-int turnMsForDegrees(int deg) {
-  if (deg <= 0) return 0;
-  long ms = (long)(deg / DEG_PER_MS_AT_SPEED_LOW);
-  return (int)constrain(ms, 80L, 3000L);
-}
-
-const int MAX_TURN_DEG = 180;   // 单次决策内最大转向角
-
-// ==================== 电机方向修正 ====================
-
-const bool MOTOR_LEFT_DIR_REVERSE  = false;  // 雷达改向后相对 v1 反过一次；某侧反了单独改
-const bool MOTOR_RIGHT_DIR_REVERSE = false;
-
-// ==================== 距离分段（按车头距推导，自动补偿探头偏移）====================
-// PAD_* 是「车头到障碍」希望保留的余量；探头偏移由 SENSOR_OFFSET_CM 自动加进去。
-// 实际比较使用「测距值」，所以阈值 = (车头余量) - SENSOR_OFFSET_CM。
-
-const int BRAKE_PAD_CM   = 12;  // 减速余量
-const int STOP_PAD_CM    = 6;   // 必须停车余量
-const int BACKUP_PAD_CM  = 4;   // 极近，必须先后退
-
-// 车上最靠前部位的「期望余量」（仅供推导，不直接和 cm 比较）
-inline int frontStop()  { return STOP_PAD_CM + BACKUP_PAD_CM; }
-inline int frontBrake() { return CAR_WIDTH_CM + STOP_PAD_CM; }
-inline int frontSafe()  { return CAR_LENGTH_CM + BRAKE_PAD_CM; }
-
-// 探头退后时给阈值加 |offset|；突出 / 齐平时为 0
-inline int sensorBackMargin() {
-  return (SENSOR_OFFSET_CM < 0) ? -SENSOR_OFFSET_CM : 0;
-}
-
-// 与「测距 cm」比较的阈值（探头退后越多越保守，突出/齐平不补偿）
-inline int dStop()    { return frontStop()  + sensorBackMargin(); }
-inline int dBrake()   { return frontBrake() + sensorBackMargin(); }
-inline int dSafe()    { return frontSafe()  + sensorBackMargin(); }
-
-// 软件滞回（非物理余量）：见 VERSION.md「dClear / dProbeOk 为什么要在 dSafe 上再加余量」
-inline int dClear()   { return dSafe() + 10; }  // 直行升全速，防 dSafe 边界反复加减速
-inline int dProbeOk() { return dSafe() + 5; }   // 转向探测判通，防转完立刻再 DECIDE
-
-const int MAX_VALID_CM = 400;
-
-// ==================== 避障/脱困参数 ====================
-
-const int PROBE_TURN_DEG_RIGHT = 35;   // 右手法则：先右探一点
-const int PROBE_TURN_DEG_LEFT  = 35;   // 不行再左探
-const int ESCAPE_TURN_DEG      = 90;   // 后退升档时的大转角
-
-const int MS_BACKUP_BASE       = 350;
-const int MS_BACKUP_STEP       = 150;
-const int MS_BACKUP_MAX        = 900;
-
-const byte STUCK_MAX_LEVEL     = 3;
-const unsigned long STUCK_REPEAT_MS = 2000;
-const unsigned long STUCK_RESET_MS  = 3000;
-
-// 抖动抑制
-const byte BLOCK_CONFIRM = 2;
-const byte CLEAR_CONFIRM = 3;
-const byte NEAR_CONFIRM    = 2;   // 极近连续 N 次才 BACKUP，避免单次误读
-const unsigned long BACKUP_COOLDOWN_MS = 1200;  // 刚后退后禁止再进 BACKUP，改走 DECIDE
+#include <uno_tb6612_hc04.h>
+#include "uno_tb6612_hc04_avoid_v2_fsm_alg_1_1/params_alg_1_1_cfg_1_0.h"
 
 // ==================== 状态机 ====================
 
@@ -160,7 +65,7 @@ static byte probePhase = 0;            // 0=未开始 1=右探 2=回正 3=左探
 static int  probeCommittedTurnDeg = 0; // 已转出的角度，便于回正
 static int  probeCommittedTurnDir = 0; // 1=已向右累计，-1=已向左累计
 
-const int MS_LOOP_PAUSE = 30;   // 每圈 loop 末尾停顿；见 VERSION.md「MS_LOOP_PAUSE」
+// MS_LOOP_PAUSE 见 params_alg_1_1_cfg_1_0.h
 
 // ==================== 前置声明 ====================
 

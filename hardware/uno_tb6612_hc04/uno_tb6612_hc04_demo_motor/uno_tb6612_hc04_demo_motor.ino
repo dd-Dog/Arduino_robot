@@ -40,23 +40,7 @@
 
 #define DEBUG_HOLD_FORWARD 0  // 1=一直前进便于万用表测 D3/D4/D5（测完改回 0）
 
-// ---------- 逻辑控制脚 → Arduino ----------
-const int PIN_PWMA = 5;    // A 路 PWM → 左侧两电机
-const int PIN_AIN1 = 4;
-const int PIN_AIN2 = 3;
-
-const int PIN_PWMB = 6;    // B 路 PWM → 右侧两电机
-const int PIN_BIN1 = 7;
-const int PIN_BIN2 = 8;
-
-const int PIN_STBY = 10;   // 待机控制，必须 HIGH 才工作
-
-// 架空试车若前进变后退，把对应侧改为 true
-const bool MOTOR_LEFT_DIR_REVERSE  = false;
-const bool MOTOR_RIGHT_DIR_REVERSE = false;
-
-const int SPEED_LOW  = 120;   // 转向稍慢
-const int SPEED_HIGH = 200;   // 直行（≤255，过大可能电流偏大）
+#include <uno_tb6612_hc04.h>
 
 const int MS_FORWARD  = 2000;
 const int MS_BACKWARD = 2000;

@@ -22,29 +22,10 @@
 #define SERIAL_DEBUG        1   // 1=打印测距结果
 #define SERIAL_DEBUG_RAW     1   // 1=同时打印 us= 与失败原因（排查 cm=-1 时保持为 1）
 
-// ---------- TB6612（与演示版相同）----------
-const int PIN_PWMA = 5;
-const int PIN_AIN1 = 4;
-const int PIN_AIN2 = 3;
+#define UNO_TB6612_MOTOR_LEFT_REVERSE  1
+#define UNO_TB6612_MOTOR_RIGHT_REVERSE 1
+#include <uno_tb6612_hc04.h>
 
-const int PIN_PWMB = 6;
-const int PIN_BIN1 = 7;
-const int PIN_BIN2 = 8;
-
-const int PIN_STBY = 10;
-
-// ---------- HC-SR04 ----------
-const int PIN_TRIG = 9;
-const int PIN_ECHO = 12;
-
-// 若避障时「该前进却倒车」，两侧都改为 true（与演示版架空标定方式相同）
-const bool MOTOR_LEFT_DIR_REVERSE  = true;
-const bool MOTOR_RIGHT_DIR_REVERSE = true;
-
-const int SPEED_LOW  = 120;
-const int SPEED_HIGH = 200;
-
-const int MAX_VALID_CM   = 400;
 const int MS_LOOP_PAUSE  = 50;
 
 // ---------- 自适应避障（遇障仍堵则档位升高，参数从小到大）----------

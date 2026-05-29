@@ -29,4 +29,4 @@
 | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | 避障 ALG-1.1（状态机） |
 | `uno_tb6612_hc04_cal_turn` | 转向标定辅助 |
 
-算法说明与对比见 [VERSION.md](./VERSION.md)；命名规则见 [docs/NAMING.md](../../docs/NAMING.md)。
+算法说明与对比见 [VERSION.md](./VERSION.md)；命名 [docs/NAMING.md](../../docs/NAMING.md)；参数分层 [docs/CONFIG.md](../../docs/CONFIG.md)（公用 `libraries/.../common_1_0/`，算法 `params_alg_*_cfg_*.h`）。

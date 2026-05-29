@@ -42,12 +42,28 @@ hardware/
 
 **新增硬件：** 新平台目录 + 新主版本，如 `hardware/uno_tb6612_servo180/..._alg_2_0`。
 
-## 代码
+## 参数文件（`libraries/uno_tb6612_hc04/`）
+
+与 sketch 分离，分两层目录：
+
+| 层级 | 路径 | 示例 |
+|------|------|------|
+| **平台公用** | `common_1_0/*.h` | `pins.h`、`chassis.h`、`motion.h` |
+| **算法专用** | `<sketch名>/params_alg_<主>_<次>_cfg_<参数集>.h` | `params_alg_1_1_cfg_1_0.h` |
+
+- `alg_1_1`：对应 **ALG-1.1**（与 sketch 文件夹后缀一致）
+- `cfg_1_0`：同一算法下**第 1 套**调参（对比时复制为 `cfg_1_1`，或换 `#include`）
+
+sketch 引用：
 
 ```cpp
-#define ALG_ID           "ALG-1.1"
-#define ALG_SLUG         "fsm_rhr"
+#include <uno_tb6612_hc04.h>
+#include "uno_tb6612_hc04_avoid_v2_fsm_alg_1_1/params_alg_1_1_cfg_1_0.h"
 ```
+
+详见 [CONFIG.md](CONFIG.md)。
+
+## 代码（sketch 内宏）
 
 ## Arduino IDE
 
@@ -56,5 +72,5 @@ hardware/
 ## 实验记录
 
 ```
-平台=uno_tb6612_hc04 | ALG-1.1 fsm_rhr | 结论…
+平台=uno_tb6612_hc04 | ALG-1.1 fsm_rhr | params=cfg-1.0 | 结论…
 ```
