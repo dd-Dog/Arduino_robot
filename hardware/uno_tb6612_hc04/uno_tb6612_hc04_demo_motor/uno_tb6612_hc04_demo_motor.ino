@@ -34,8 +34,8 @@
  *
  * 调试：车轮架空；某侧反了改 MOTOR_LEFT/RIGHT_DIR_REVERSE
  *
- * 重要：请用 Arduino IDE 打开文件夹 car_tb6612（不要打开 sketch_may21a）
- * IDE 须显示：car_tb6612 | Arduino Uno，上传成功后再测引脚。
+ * 重要：Arduino IDE 打开文件夹 uno_tb6612_hc04_demo_motor 上传。
+ * 平台：hardware/uno_tb6612_hc04/  命名见 docs/NAMING.md
  */
 
 #define DEBUG_HOLD_FORWARD 0  // 1=一直前进便于万用表测 D3/D4/D5（测完改回 0）

@@ -1,17 +1,20 @@
 /*
  * 四驱小车 — 避障版 v1（固定朝前 HC-SR04）
  *
- * 版本：FIRMWARE_VERSION = "v1"
- * 策略说明：本目录 VERSION.md
+ * ALG_ID = "ALG-1.0"  slug: reactive_alt
+ * 策略说明：本平台 VERSION.md
  * 后续 v2 规划：docs/DEVELOPMENT.md
  *
- * Arduino IDE：打开文件夹 car_tb6612_avoid 上传本文件。
- * 刷演示版：打开 car_tb6612，无需 git 回退。
+ * 平台：uno_tb6612_hc04
+ * Arduino IDE：打开文件夹 uno_tb6612_hc04_avoid_v1_alg_1_0 上传。
+ * 刷演示版：打开 uno_tb6612_hc04_demo_motor，无需 git 回退。
  *
  * HC-SR04：Vcc 5V  Gnd 共地  Trig D9  Echo D12
  * 调试：DEBUG_HOLD_FORWARD / DEBUG_SENSOR_ONLY / SERIAL_DEBUG
  */
 
+#define ALG_ID           "ALG-1.0"
+#define ALG_SLUG         "reactive_alt"
 #define FIRMWARE_VERSION "v1"
 
 #define DEBUG_HOLD_FORWARD 0
@@ -89,8 +92,10 @@ void setup() {
 #if SERIAL_DEBUG || DEBUG_SENSOR_ONLY
   Serial.begin(9600);
   delay(200);
-  Serial.print(F("car_tb6612_avoid "));
-  Serial.println(FIRMWARE_VERSION);
+  Serial.print(F("uno_tb6612_hc04_avoid_v1_alg_1_0 "));
+  Serial.print(ALG_ID);
+  Serial.print(F(" "));
+  Serial.println(ALG_SLUG);
   Serial.println(F("=== HC-SR04 9600 ==="));
   Serial.print(F("Echo idle (应多为0): "));
   Serial.println(digitalRead(PIN_ECHO));

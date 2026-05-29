@@ -38,47 +38,33 @@ UNO 最大的问题是什么？
 
 ## 工程结构
 
-
+命名规则见 [docs/NAMING.md](docs/NAMING.md)：**硬件平台**与**算法 sketch** 分开目录，便于同硬件多算法对比。
 
 ```
-
-robotic_01/                    ← Cursor 建议始终打开此文件夹
+Arduino_robot/                 ← 仓库根（GitHub 同名；本地文件夹可仍为 robotic_01，Cursor 打开父目录即可）
 
 ├── README.md
-
-├── car_tb6612/
-
-│   └── car_tb6612.ino         ← 演示版（动作循环，随时可刷回）
-
-└── car_tb6612_avoid/
-
-    ├── car_tb6612_avoid.ino   ← 避障固件（当前 **v1**）
-
-    └── VERSION.md             ← 版本与避障策略；v2 见 docs/DEVELOPMENT.md
-
-└── servo_test/
-
-    └── servo_test.ino         ← 舵机单独测试（确认后再合入主程序）
-
+├── docs/
+│   ├── NAMING.md              ← 目录/文件命名约定
+│   └── DEVELOPMENT.md         ← 开发路线
+└── hardware/
+    └── uno_tb6612_hc04/       ← 平台：Uno + TB6612 + 固定 HC-SR04
+        ├── HARDWARE.md        ← 本平台接线索引
+        ├── VERSION.md         ← 本平台算法说明与对比
+        ├── uno_tb6612_hc04_demo_motor/      ← 电机演示
+        ├── uno_tb6612_hc04_avoid_v1_alg_1_0/         ← 避障 v1
+        ├── uno_tb6612_hc04_avoid_v2_fsm_alg_1_1/     ← 避障 v2（状态机，当前主力）
+        └── uno_tb6612_hc04_cal_turn/        ← 转向标定辅助
 ```
 
+| 用途 | Arduino IDE 打开的 sketch 文件夹 |
+|------|----------------------------------|
+| **电机演示** | `hardware/uno_tb6612_hc04/uno_tb6612_hc04_demo_motor` |
+| **避障 v1** | `hardware/uno_tb6612_hc04/uno_tb6612_hc04_avoid_v1_alg_1_0` |
+| **避障 v2** | `hardware/uno_tb6612_hc04/uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` |
+| **转向标定** | `hardware/uno_tb6612_hc04/uno_tb6612_hc04_cal_turn` |
 
-
-| 用途 | Arduino IDE 打开文件夹 |
-
-|------|------------------------|
-
-| **动作演示**（前进/后退/转向循环） | `car_tb6612` |
-
-| **超声波避障** | `car_tb6612_avoid` |
-
-| **舵机测试** | `servo_test` |
-
-| **Cursor 编辑** | `robotic_01`（父目录） |
-
-
-
-两个版本各用一个文件夹、各一个 `.ino`，换版本时在 IDE 里切换打开的文件夹再上传即可，**无需 git 回退**。
+换算法 = 在 IDE 里换打开的文件夹再上传，**无需 git 回退**。新增硬件在 `hardware/` 下新建平台目录；新增算法在同一平台下新建 `uno_tb6612_hc04_<算法名>/`。
 
 
 
@@ -264,7 +250,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-### 演示版（`car_tb6612.ino`）✅
+### 演示版（`uno_tb6612_hc04_demo_motor`）✅
 
 
 
@@ -280,7 +266,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-### 避障版（`car_tb6612_avoid.ino`）✅ 实车可跑
+### 避障版（`uno_tb6612_hc04_avoid_v1_alg_1_0` / `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1`）✅ 实车可跑
 
 
 
@@ -314,7 +300,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-#### 自适应参数（`car_tb6612_avoid.ino` 顶部可调）
+#### 自适应参数（v1：`uno_tb6612_hc04_avoid_v1_alg_1_0.ino` 顶部可调）
 
 
 
@@ -370,7 +356,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-1. IDE 打开 `car_tb6612`，接好 TB6612，**车轮架空**上传。
+1. IDE 打开 `hardware/uno_tb6612_hc04/uno_tb6612_hc04_demo_motor`，接好 TB6612，**车轮架空**上传。
 
 2. 5V 约 **4.9~5.1V**；某侧倒转则改 `MOTOR_*_DIR_REVERSE`。
 
@@ -380,7 +366,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-1. IDE 打开 **`car_tb6612_avoid`**，接好 TB6612 + HC-SR04（Trig=D9，Echo=D12）。
+1. IDE 打开 **`uno_tb6612_hc04_avoid_v2_fsm_alg_1_1`**（或 v1 文件夹），接好 TB6612 + HC-SR04（Trig=D9，Echo=D12）。
 
 2. 先 `DEBUG_SENSOR_ONLY=1`，串口 **9600** 看 `cm=` 是否正常（手掌 20~40cm 有变化）。
 
@@ -392,7 +378,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 
 
-刷回演示版：IDE 打开 **`car_tb6612`** 上传。
+刷回演示版：IDE 打开 **`uno_tb6612_hc04_demo_motor`** 上传。
 
 
 
@@ -418,7 +404,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 | 窄道左右摆不出 | 单探头局限；升档参数或加第二传感器 |
 
-| 编译/上传错乱 | 确认 IDE 标题为 `car_tb6612` 或 `car_tb6612_avoid` |
+| 编译/上传错乱 | 确认 IDE 标题为当前 sketch 文件夹名（如 `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1`） |
 
 
 
@@ -436,6 +422,7 @@ robotic_01/                    ← Cursor 建议始终打开此文件夹
 
 - 供电：电源模块需 **7~10V** 输入，2×18650 串联。
 
-- 避障：新增 `car_tb6612_avoid`（HC-SR04、自适应脱困）；与 `car_tb6612` 分文件夹维护；README 同步接线与调参说明。
+- 避障：新增避障 sketch（HC-SR04、自适应脱困）；与演示版分文件夹维护。
+- 目录重组：`hardware/uno_tb6612_hc04/<平台>_<算法>/`；见 `docs/NAMING.md`。
 
 

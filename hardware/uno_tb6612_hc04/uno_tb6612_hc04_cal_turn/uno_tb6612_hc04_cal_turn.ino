@@ -1,10 +1,10 @@
 /*
  * 原地转向标定 — 测 SPEED_LOW 下「度 / 毫秒」
  *
- * 用途：校准 car_tb6612_avoid_v2 里的
+ * 用途：校准 uno_tb6612_hc04_avoid_v2_fsm_alg_1_1 里的
  *       const float DEG_PER_MS_AT_SPEED_LOW = 0.30f;
  *
- * Arduino IDE：打开文件夹 car_turn_cal 上传。
+ * Arduino IDE：打开文件夹 uno_tb6612_hc04_cal_turn 上传。
  * 接线与 v2 相同（TB6612 D3~D8，STBY D10），无需 HC-SR04。
  *
  * 用法：

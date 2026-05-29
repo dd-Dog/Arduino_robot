@@ -1,4 +1,4 @@
-# car_tb6612_avoid 版本说明
+# 平台 `uno_tb6612_hc04` — 避障算法版本说明
 
 > **说明**：避障策略、阈值推导、滞回等「为什么这样设计」的解释性内容，以本文档为准；代码里只保留简短注释并指向此处。
 
@@ -16,16 +16,18 @@
 所以 v2 用 **状态机**（`FORWARD` / `DECIDE` / …）而不是多任务：每一时刻只做一件事，用 `state` 记住「下一步该干啥」。  
 `MS_LOOP_PAUSE`、测距三次取最小、滞回阈值，都是在这个前提下让**顺序执行**更稳、别过激。
 
-| 版本 | 文件 | 状态 |
-|------|------|------|
-| **v1** | `car_tb6612_avoid_v1.ino` | 稳定基线（固定雷达，时间转向 + 自适应脱困） |
-| **v2** | `car_tb6612_avoid_v2.ino` | **当前开发**：机械参数化 + 距离分段 + 状态机 + 右手法则 |
+| ALG ID | Sketch | 结构 slug | 状态 |
+|--------|--------|-----------|------|
+| — | `uno_tb6612_hc04_demo_motor` | `demo_motor` | 电机演示 |
+| **ALG-1.0** | `uno_tb6612_hc04_avoid_v1_alg_1_0` | `reactive_alt` | 稳定基线（固定雷达，时间转向 + 自适应脱困） |
+| **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` | **当前开发**：机械参数化 + 距离分段 + 状态机 + 右手法则 |
 
-切换：Arduino 同一 sketch 文件夹里所有 `.ino` 会一起编译，**不能同时启用两个版本**。  
-编辑/上传哪个版本时，把另一个临时改名为 `*.ino.bak`（或剪切到其它目录）即可。  
+版本号规则：**主版本 = 硬件平台，次版本 = 同硬件算法**；见 [docs/NAMING.md](../../docs/NAMING.md)。
+
+切换：各算法为**独立 sketch 文件夹**，IDE 里换打开的文件夹上传即可，无需 `.bak`。  
 后续路线图见 [docs/DEVELOPMENT.md](../docs/DEVELOPMENT.md)。
 
-上传后串口会打印当前 `FIRMWARE_VERSION`，便于核对。
+上传后串口会打印 `ALG_ID`（及兼容用的 `FIRMWARE_VERSION`），便于核对。
 
 ---
 
@@ -296,7 +298,7 @@ DECIDE 右探/左探后若用 `dSafe`（39）就判通：
 | `dClear` | +10 | **软件滞回** | 直行升全速，防加减速抖动 |
 | `dProbeOk` | +5 | **软件滞回** | 转向探测判通，防转完立刻再 DECIDE |
 
-代码里对应（`car_tb6612_avoid_v2.ino`）：
+代码里对应（`uno_tb6612_hc04_avoid_v2_fsm_alg_1_1.ino`）：
 
 ```cpp
 inline int dClear()   { return dSafe() + 10; }  // 直行滞回，改 +10 调灵敏度
@@ -369,7 +371,7 @@ sensorBackMargin = max(0, -SENSOR_OFFSET_CM)
 
 ## v2 运行时状态变量
 
-`car_tb6612_avoid_v2.ino` 里除状态机 `state` 外，还有一组 **跨 loop 记住的变量**（`static`，断电清零）：
+`uno_tb6612_hc04_avoid_v2_fsm_alg_1_1.ino` 里除状态机 `state` 外，还有一组 **跨 loop 记住的变量**（`static`，断电清零）：
 
 | 变量 | 类型 | 初始 | 干什么 |
 |------|------|------|--------|
