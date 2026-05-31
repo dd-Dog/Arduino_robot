@@ -36,9 +36,10 @@ hardware/
 | — | `uno_tb6612_hc04_demo_motor` | 电机演示（无 ALG） |
 | **ALG-1.0** | `uno_tb6612_hc04_avoid_v1_alg_1_0` | `reactive_alt` |
 | **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` |
+| **ALG-1.2** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2` | `fsm_rhr_step` |
 | — | `uno_tb6612_hc04_cal_turn` | 转向标定（无 ALG） |
 
-**新增同硬件算法：** 次版本 +1，如 ALG-1.2 → `..._avoid_fsm_mem_alg_1_2`。
+**新增同硬件算法：** 次版本 +1，如 ALG-1.2 → `..._avoid_v2_fsm_alg_1_2`。
 
 **新增硬件：** 新平台目录 + 新主版本，如 `hardware/uno_tb6612_servo180/..._alg_2_0`。
 
@@ -49,7 +50,7 @@ hardware/
 | 层级 | 路径 | 示例 |
 |------|------|------|
 | **平台公用** | `common_1_0/*.h` | `pins.h`、`chassis.h`、`motion.h` |
-| **算法专用** | `<sketch名>/params_alg_<主>_<次>_cfg_<参数集>.h` | `params_alg_1_1_cfg_1_0.h` |
+| **算法专用** | `<sketch名>/params_alg_<主>_<次>_cfg_<参数集>.h` | `params_alg_1_1_cfg_1_0.h`、`params_alg_1_2_cfg_1_0.h` |
 
 - `alg_1_1`：对应 **ALG-1.1**（与 sketch 文件夹后缀一致）
 - `cfg_1_0`：同一算法下**第 1 套**调参（对比时复制为 `cfg_1_1`，或换 `#include`）
@@ -67,7 +68,7 @@ sketch 引用：
 
 ## Arduino IDE
 
-打开 sketch **文件夹**（与 `.ino` 同名），如 `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1`。
+打开 sketch **文件夹**（与 `.ino` 同名），如 `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2`（当前开发）或 `..._alg_1_1`（基线）。
 
 ## 实验记录
 

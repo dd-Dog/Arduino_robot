@@ -20,11 +20,13 @@
 |--------|--------|-----------|------|
 | — | `uno_tb6612_hc04_demo_motor` | `demo_motor` | 电机演示 |
 | **ALG-1.0** | `uno_tb6612_hc04_avoid_v1_alg_1_0` | `reactive_alt` | 稳定基线（固定雷达，时间转向 + 自适应脱困） |
-| **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` | **当前开发**：机械参数化 + 距离分段 + 状态机 + 右手法则 |
+| **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` | 基线：单次 35° 右/左探 + 原后退时长 |
+| **ALG-1.2** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2` | `fsm_rhr_step` | **当前开发**：阶梯 15°×6 右/左探 + 缩短后退 |
 
 版本号规则：**主版本 = 硬件平台，次版本 = 同硬件算法**；见 [docs/NAMING.md](../../docs/NAMING.md)。
 
 切换：各算法为**独立 sketch 文件夹**，IDE 里换打开的文件夹上传即可，无需 `.bak`。  
+**ALG-1.2** 阶梯探测与缩短后退见 [docs/DEVELOPMENT.md](../../docs/DEVELOPMENT.md#alg-12fsm_rhr_step--已实现)。  
 后续路线图见 [docs/DEVELOPMENT.md](../docs/DEVELOPMENT.md)。
 
 上传后串口会打印 `ALG_ID`（及兼容用的 `FIRMWARE_VERSION`），便于核对。
