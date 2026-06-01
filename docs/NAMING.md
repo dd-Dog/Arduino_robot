@@ -37,6 +37,7 @@ hardware/
 | **ALG-1.0** | `uno_tb6612_hc04_avoid_v1_alg_1_0` | `reactive_alt` |
 | **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` |
 | **ALG-1.2** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2` | `fsm_rhr_step` |
+| **ALG-1.3** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_3` | `fsm_pass_weave` |
 | — | `uno_tb6612_hc04_cal_turn` | 转向标定（无 ALG） |
 
 **新增同硬件算法：** 次版本 +1，如 ALG-1.2 → `..._avoid_v2_fsm_alg_1_2`。
@@ -68,7 +69,7 @@ sketch 引用：
 
 ## Arduino IDE
 
-打开 sketch **文件夹**（与 `.ino` 同名），如 `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2`（当前开发）或 `..._alg_1_1`（基线）。
+打开 sketch **文件夹**（与 `.ino` 同名），如 `uno_tb6612_hc04_avoid_v2_fsm_alg_1_3`（当前）或 `..._alg_1_2` / `..._alg_1_1`。
 
 ## 实验记录
 

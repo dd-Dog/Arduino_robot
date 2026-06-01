@@ -21,7 +21,8 @@
 | — | `uno_tb6612_hc04_demo_motor` | `demo_motor` | 电机演示 |
 | **ALG-1.0** | `uno_tb6612_hc04_avoid_v1_alg_1_0` | `reactive_alt` | 稳定基线（固定雷达，时间转向 + 自适应脱困） |
 | **ALG-1.1** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_1` | `fsm_rhr` | 基线：单次 35° 右/左探 + 原后退时长 |
-| **ALG-1.2** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2` | `fsm_rhr_step` | **当前开发**：阶梯 15°×6 右/左探 + 缩短后退 |
+| **ALG-1.2** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_2` | `fsm_rhr_step` | 阶梯探 + 缩短后退 |
+| **ALG-1.3** | `uno_tb6612_hc04_avoid_v2_fsm_alg_1_3` | `fsm_pass_weave` | **当前**：dProbePass + WEAVE/RECENTER |
 
 版本号规则：**主版本 = 硬件平台，次版本 = 同硬件算法**；见 [docs/NAMING.md](../../docs/NAMING.md)。
 

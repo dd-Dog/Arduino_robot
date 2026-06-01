@@ -24,9 +24,12 @@ libraries/uno_tb6612_hc04/
 ├── common_1_0/                    ← 平台公用 cfg-1.0
 ├── uno_tb6612_hc04_avoid_v2_fsm_alg_1_1/
 │   └── params_alg_1_1_cfg_1_0.h   ← ALG-1.1
-└── uno_tb6612_hc04_avoid_v2_fsm_alg_1_2/
-    ├── params_alg_1_2_cfg_1_0.h   ← ALG-1.2 基线（6×15°→90°，DEG 0.105）
-    └── params_alg_1_2_cfg_1_1.h   ← ALG-1.2 跑道/新电池（3×15°→45°，DEG 0.118）
+├── uno_tb6612_hc04_avoid_v2_fsm_alg_1_2/
+│   ├── params_alg_1_2_cfg_1_0.h
+│   └── params_alg_1_2_cfg_1_1.h
+└── uno_tb6612_hc04_avoid_v2_fsm_alg_1_3/
+    ├── params_alg_1_3_cfg_1_0.h
+    └── params_alg_1_3_cfg_1_1.h   ← 加长 WEAVE（默认）
 ```
 
 命名：`params_alg_<主>_<次>_cfg_<参数集版本>.h`
